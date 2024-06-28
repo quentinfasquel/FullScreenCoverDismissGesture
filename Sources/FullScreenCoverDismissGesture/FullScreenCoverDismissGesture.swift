@@ -46,6 +46,7 @@ public struct PresentationDismissGestureModifier: ViewModifier {
                 if isBeingPresented {
                     Color.black
                         .opacity(0.65 * (isBeingDismissed ? 0 : 1 - offsetY))
+                        .ignoresSafeArea()
                         .transition(.opacity)
                 }
 
@@ -76,7 +77,6 @@ public struct PresentationDismissGestureModifier: ViewModifier {
                 }
             )
         }
-        .ignoresSafeArea()
         .presentationBackground(.clear)
         .onAnimationCompleted(for: isBeingDismissed ? 1 : 0) {
             dismissWithoutAnimation()
