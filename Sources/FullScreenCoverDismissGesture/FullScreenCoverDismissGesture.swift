@@ -65,7 +65,7 @@ public struct PresentationDismissGestureModifier: ViewModifier {
                         .zIndex(1)
                 }
             }
-            .gesture(DragGesture()
+            .highPriorityGesture(DragGesture()
                 .updating($draggingOffset) { value, state, transaction in
                     if #available(iOS 17, *) {
                         transaction.tracksVelocity = true
@@ -80,8 +80,7 @@ public struct PresentationDismissGestureModifier: ViewModifier {
 
                     draggedOffset = offset
                     animateDismiss()
-                }
-            )
+                }, including: .all)
         }
         .presentationBackground(.clear)
         .onAnimationCompleted(for: isBeingDismissed ? 1 : 0) {
