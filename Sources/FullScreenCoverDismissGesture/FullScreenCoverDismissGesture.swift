@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftUIIntrospect
 
 extension View {
     @available(iOS 16.4, *)
@@ -82,7 +83,9 @@ public struct PresentationDismissGestureModifier: ViewModifier {
                     animateDismiss()
                 }, including: .all)
         }
-        .presentationBackground(.clear)
+        .introspect(.fullScreenCover, on: .iOS(.v16, .v17, .v18)) { presentationCover in
+            presentationCover.presentedView?.backgroundColor = .clear
+        }
         .onAnimationCompleted(for: isBeingDismissed ? 1 : 0) {
             dismissWithoutAnimation()
         }
