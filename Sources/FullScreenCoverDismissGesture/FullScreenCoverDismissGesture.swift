@@ -9,8 +9,8 @@ import SwiftUI
 
 extension View {
     @available(iOS 16.4, *)
-    public func fullScreenCoverDismissGesture() -> some View {
-        modifier(PresentationDismissGestureModifier())
+    public func fullScreenCoverDismissGesture(minimumOffsetY: CGFloat? = nil) -> some View {
+        modifier(PresentationDismissGestureModifier(minimumOffsetY: minimumOffsetY))
     }
 }
 
@@ -32,12 +32,18 @@ public struct PresentationDismissGestureModifier: ViewModifier {
         }
     }) private var draggingOffset: CGFloat = 0
 
-    var offsetY: CGFloat {
+    private var offsetY: CGFloat {
         draggingOffset + draggedOffset
     }
 
     static func dragGestureShouldDismiss(_ offset: CGFloat) -> Bool {
         offset > 0.25
+    }
+
+    public var minimumOffsetY: CGFloat?
+
+    public init(minimumOffsetY: CGFloat? = nil) {
+        self.minimumOffsetY = minimumOffsetY
     }
 
     public func body(content: Content) -> some View {
@@ -54,7 +60,7 @@ public struct PresentationDismissGestureModifier: ViewModifier {
                     EmptyView()
                 } else if isBeingPresented {
                     content
-                        .offset(y: offsetY * geometry.size.height)
+                        .offset(y: max(minimumOffsetY, offsetY * geometry.size.height))
                         .transition(.move(edge: .bottom))
                         .zIndex(1)
                 }
@@ -127,5 +133,13 @@ extension EnvironmentValues {
     public fileprivate(set) var fullScreenCoverDismiss: FullScreenCoverDismissAction {
         get { self[FullScreenCoverDismissEnvironmentKey.self] }
         set { self[FullScreenCoverDismissEnvironmentKey.self] = newValue }
+    }
+}
+
+fileprivate func max(_ maximumValue: CGFloat?, _ value: CGFloat) -> CGFloat {
+    if let maximumValue {
+        max(maximumValue, value)
+    } else {
+        value
     }
 }
