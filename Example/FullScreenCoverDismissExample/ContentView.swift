@@ -41,6 +41,8 @@ struct DetailView: View {
     var body: some View {
         ZStack {
             Color.black
+                .fullScreenCoverFixedSize()
+
             VStack(spacing: 16) {
                 Group {
                     Text("Drag to dismiss")
